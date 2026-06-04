@@ -732,7 +732,7 @@ if len(df) > 0:
     ax_s.set_xlabel(metric, fontsize=11, weight='bold')
     ax_s.set_ylabel('Survival Rate (%)', fontsize=11, weight='bold')
     ax_s.set_ylim(0, 115)
-    ax_s.axhline(y=50, color='rgba(255,255,255,0.2)', linestyle='--', linewidth=1)
+    ax_s.axhline(y=50, color=(1, 1, 1, 0.2), linestyle='--', linewidth=1)
     ax_s.grid(axis='y', linestyle='--', alpha=0.3)
     sns.despine(ax=ax_s)
     st.pyplot(style_fig(fig_s))
