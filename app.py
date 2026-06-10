@@ -31,9 +31,11 @@ PLOTLY_LAYOUT = dict(
     font=dict(family="Inter, Segoe UI, sans-serif", size=13, color="#2b2d42"),
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
-    margin=dict(l=10, r=10, t=50, b=10),
-    title=dict(font=dict(size=17, color="#2b2d42")),
-    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    margin=dict(l=10, r=10, t=46, b=10),
+    legend=dict(orientation="h", yanchor="bottom", y=1.04, xanchor="left", x=0,
+                font=dict(color="#2b2d42", size=12), bgcolor="rgba(255,255,255,0)"),
+    xaxis=dict(title_font=dict(color="#2b2d42", size=13), tickfont=dict(color="#4a4d6e")),
+    yaxis=dict(title_font=dict(color="#2b2d42", size=13), tickfont=dict(color="#4a4d6e")),
     colorway=VIVID,
 )
 
