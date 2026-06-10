@@ -49,6 +49,22 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
 h1,h2,h3,h4 { font-family:'Plus Jakarta Sans',sans-serif !important; color:#1f2140 !important; }
 
+/* High-contrast text in the MAIN area (sidebar handled separately below) */
+[data-testid="stMain"] label,
+[data-testid="stMain"] label *,
+[data-testid="stMain"] [data-testid="stWidgetLabel"] *,
+section.main label { color:#1f2140 !important; font-weight:600 !important; }
+[data-testid="stMain"] .stMarkdown p,
+[data-testid="stMain"] .stMarkdown li,
+section.main .stMarkdown p { color:#2b2d42 !important; }
+[data-testid="stMain"] [data-baseweb="radio"] *,
+[data-testid="stMain"] [data-baseweb="checkbox"] *,
+[data-testid="stMain"] [data-baseweb="select"] *,
+[data-testid="stMain"] [data-testid="stExpander"] *,
+section.main [data-baseweb="radio"] *,
+section.main [data-baseweb="select"] * { color:#2b2d42 !important; }
+[data-testid="stMain"] summary, .streamlit-expanderHeader { color:#1f2140 !important; font-weight:700 !important; }
+
 /* Hero */
 .hero{
   border-radius:22px; padding:2.6rem 2.4rem; margin-bottom:1.6rem; color:#fff;
@@ -75,7 +91,7 @@ h1,h2,h3,h4 { font-family:'Plus Jakarta Sans',sans-serif !important; color:#1f21
 .sec{ font-size:1.5rem; font-weight:800; margin:2rem 0 .2rem;
   background:linear-gradient(90deg,#7B5CFF,#FF5470); -webkit-background-clip:text;
   -webkit-text-fill-color:transparent; }
-.sec-sub{ color:#6b6f8a; font-size:.92rem; margin-bottom:1rem; }
+.sec-sub{ color:#4a4d6e; font-size:.92rem; margin-bottom:1rem; }
 
 /* Control panel */
 .panel{ background:#fff; border:1px solid #eceaf6; border-radius:16px;
@@ -96,7 +112,7 @@ h1,h2,h3,h4 { font-family:'Plus Jakarta Sans',sans-serif !important; color:#1f21
   text-align:center; box-shadow:0 6px 18px -16px rgba(0,0,0,.5); }
 .mem .nm{ font-family:'Plus Jakarta Sans'; font-weight:800; font-size:.9rem; color:#1f2140; }
 .mem .id{ font-size:.72rem; color:#7B5CFF; margin:.2rem 0 .4rem; }
-.mem .rl{ font-size:.72rem; color:#6b6f8a; line-height:1.4; }
+.mem .rl{ font-size:.74rem; color:#50536e; line-height:1.45; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -156,14 +172,21 @@ def dist_chart(df, var, kind, split):
     if kind == "Histogram":
         fig = px.histogram(df, x=var, color=color, nbins=30, opacity=.8,
                            color_discrete_map=cmap, barmode="overlay" if split else "relative")
-    elif kind == "Box":
-        fig = px.box(df, y=var, x=color, color=color, color_discrete_map=cmap, points="suspectedoutliers")
-    else:  # Violin
-        fig = px.violin(df, y=var, x=color, color=color, color_discrete_map=cmap, box=True, points=False)
-    if var == "Fare" and kind != "Histogram":
-        fig.update_yaxes(type="log")
-    if not split:
-        fig.update_traces(marker_color="#7B5CFF", selector=dict(type="histogram"))
+        if not split:
+            fig.update_traces(marker_color="#7B5CFF")
+    else:
+        # box / violin need an x category, otherwise the axis renders "undefined"
+        x = "Status" if split else "_grp"
+        pdf = df if split else df.assign(_grp="All passengers")
+        if kind == "Box":
+            fig = px.box(pdf, x=x, y=var, color=color, color_discrete_map=cmap, points="suspectedoutliers")
+        else:  # Violin
+            fig = px.violin(pdf, x=x, y=var, color=color, color_discrete_map=cmap, box=True, points=False)
+        if not split:
+            fig.update_traces(fillcolor="rgba(123,92,255,0.55)", line_color="#7B5CFF", marker_color="#7B5CFF")
+        fig.update_xaxes(title="")
+        if var == "Fare":
+            fig.update_yaxes(type="log")
     fig.update_layout(**PLOTLY_LAYOUT)
     return fig
 
